@@ -6,6 +6,7 @@ public class GameUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text matchesText;
     [SerializeField] private TMP_Text turnsText;
+    [SerializeField] private TMP_Text scoreText;
 
     public static event Action OnResetButtonClicked;
 
@@ -18,6 +19,11 @@ public class GameUI : MonoBehaviour
     public void UpdateTurns(int turns)
     {
         turnsText.text = turns.ToString();
+    }
+
+    public void UpdateScore(int score)
+    {
+        scoreText.text = score.ToString();
     }
 
 
@@ -33,14 +39,16 @@ public class GameUI : MonoBehaviour
 
     private void OnEnable() 
     {
-        GameLogic.OnPairsFoundCountChanged += UpdateMatches;
-        GameLogic.OnTurnsCountChanged += UpdateTurns;
+        GameStatistic.OnPairsFoundCountChanged += UpdateMatches;
+        GameStatistic.OnTurnsCountChanged += UpdateTurns;
+        GameStatistic.OnScoreChanged += UpdateScore;
     }
 
     private void OnDisable() 
     {
-        GameLogic.OnPairsFoundCountChanged -= UpdateMatches;
-        GameLogic.OnTurnsCountChanged -= UpdateTurns;
+        GameStatistic.OnPairsFoundCountChanged -= UpdateMatches;
+        GameStatistic.OnTurnsCountChanged -= UpdateTurns;
+        GameStatistic.OnScoreChanged -= UpdateScore;
     }
 
 }

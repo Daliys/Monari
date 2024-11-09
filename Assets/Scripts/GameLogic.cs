@@ -6,14 +6,13 @@ public partial class GameLogic : MonoBehaviour
 {
     [SerializeField] private GameGridGenerator gridGenerator;
     [SerializeField] private CardImageSetSO cardImageSet;
+    [SerializeField] private ScoreInformationSO scoreInformation;
 
-    public static event Action<int> OnPairsFoundCountChanged;
-    public static event Action<int> OnTurnsCountChanged;
     public static event Action OnGameWin;
 
-    private int pairsFoundCount;
+    private GameStatistic gameStatistic;
+
     private int totalPairsCount;
-    private int turnsCount;
 
     private List<GridItem> allItems;
     private GridItem firstFlippedItem;
@@ -28,7 +27,7 @@ public partial class GameLogic : MonoBehaviour
             return;
         }
 
-
+        gameStatistic = new GameStatistic(scoreInformation);
         InitializeItems();
     }
 
@@ -59,10 +58,7 @@ public partial class GameLogic : MonoBehaviour
             }
         }
 
-        turnsCount = 0;
-        pairsFoundCount = 0;
-        OnPairsFoundCountChanged?.Invoke(pairsFoundCount);
-        OnTurnsCountChanged?.Invoke(turnsCount);
+        gameStatistic.ResetAll();
     }
 
     private void OnItemFlip(GridItem item)
@@ -83,13 +79,10 @@ public partial class GameLogic : MonoBehaviour
                 Destroy(item.gameObject);
 
                 firstFlippedItem = null;
-                pairsFoundCount++;
-                turnsCount++;
+                gameStatistic.OnCompleteSwap(true);
 
-                OnPairsFoundCountChanged?.Invoke(pairsFoundCount);
-                OnTurnsCountChanged?.Invoke(turnsCount);
 
-                if (pairsFoundCount == totalPairsCount)
+                if (gameStatistic.PairsFoundCount == totalPairsCount)
                 {
                     OnGameWin?.Invoke();
                 }
@@ -101,9 +94,8 @@ public partial class GameLogic : MonoBehaviour
                 firstFlippedItem.FlipBack();
                 item.FlipBack();
                 firstFlippedItem = null;
-                turnsCount++;
-
-                OnTurnsCountChanged?.Invoke(turnsCount);
+                
+                gameStatistic.OnCompleteSwap(false);
             }
         }
     }

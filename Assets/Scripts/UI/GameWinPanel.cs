@@ -6,11 +6,11 @@ public class GameWinPanel : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text congratsText;
-    
+
     public void Show()
     {
         panel.SetActive(true);
-       
+
 
     }
 
@@ -19,11 +19,14 @@ public class GameWinPanel : MonoBehaviour
         panel.SetActive(false);
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         GameLogic.OnGameWin += Show;
         GameUI.OnResetButtonClicked += Hide;
     }
-    private void OnDisable() {
+    
+    private void OnDisable()
+    {
         GameLogic.OnGameWin -= Show;
         GameUI.OnResetButtonClicked -= Hide;
     }
