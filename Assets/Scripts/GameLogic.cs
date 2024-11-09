@@ -9,8 +9,10 @@ public partial class GameLogic : MonoBehaviour
 
     public static event Action<int> OnPairsFoundCountChanged;
     public static event Action<int> OnTurnsCountChanged;
+    public static event Action OnGameWin;
 
     private int pairsFoundCount;
+    private int totalPairsCount;
     private int turnsCount;
 
     private List<GridItem> allItems;
@@ -34,13 +36,13 @@ public partial class GameLogic : MonoBehaviour
     {
         allItems = gridGenerator.GenerateItems(gridSize.x, gridSize.y);
 
-        int pairsCount = gridSize.x * gridSize.y / 2;
+        totalPairsCount = gridSize.x * gridSize.y / 2;
         int totalImagesCount = cardImageSet.cardImages.Count;
 
-        if (pairsCount < totalImagesCount)
+        if (totalPairsCount < totalImagesCount)
         {
             HashSet<ItemData> imageIds = new HashSet<ItemData>();
-            while (imageIds.Count < pairsCount)
+            while (imageIds.Count < totalPairsCount)
             {
                 imageIds.Add(cardImageSet.GetRandomItem());
             }
@@ -86,6 +88,11 @@ public partial class GameLogic : MonoBehaviour
 
                 OnPairsFoundCountChanged?.Invoke(pairsFoundCount);
                 OnTurnsCountChanged?.Invoke(turnsCount);
+
+                if (pairsFoundCount == totalPairsCount)
+                {
+                    OnGameWin?.Invoke();
+                }
 
             }
             else
