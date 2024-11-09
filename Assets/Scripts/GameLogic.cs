@@ -1,11 +1,17 @@
+using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
 public partial class GameLogic : MonoBehaviour
 {
     [SerializeField] private GameGridGenerator gridGenerator;
     [SerializeField] private CardImageSetSO cardImageSet;
+
+    public static event Action<int> OnPairsFoundCountChanged;
+    public static event Action<int> OnTurnsCountChanged;
+
+    private int pairsFoundCount;
+    private int turnsCount;
 
     private List<GridItem> allItems;
     private GridItem firstFlippedItem;
@@ -14,18 +20,20 @@ public partial class GameLogic : MonoBehaviour
 
     private void Start()
     {
-        if(gridSize.x * gridSize.y % 2 != 0)
+        if (gridSize.x * gridSize.y % 2 != 0)
         {
             Debug.LogError("Grid size must be even number");
             return;
         }
 
-        allItems = gridGenerator.GenerateItems(gridSize.x, gridSize.y);
+
         InitializeItems();
     }
 
     private void InitializeItems()
     {
+        allItems = gridGenerator.GenerateItems(gridSize.x, gridSize.y);
+
         int pairsCount = gridSize.x * gridSize.y / 2;
         int totalImagesCount = cardImageSet.cardImages.Count;
 
@@ -42,13 +50,17 @@ public partial class GameLogic : MonoBehaviour
 
             foreach (GridItem item in allItems)
             {
-                int randomIndex = Random.Range(0, imageIdsList.Count);
+                int randomIndex = UnityEngine.Random.Range(0, imageIdsList.Count);
                 item.Initialize(imageIdsList[randomIndex]);
                 imageIdsList.RemoveAt(randomIndex);
                 item.OnFlip += OnItemFlip;
             }
         }
 
+        turnsCount = 0;
+        pairsFoundCount = 0;
+        OnPairsFoundCountChanged?.Invoke(pairsFoundCount);
+        OnTurnsCountChanged?.Invoke(turnsCount);
     }
 
     private void OnItemFlip(GridItem item)
@@ -69,6 +81,11 @@ public partial class GameLogic : MonoBehaviour
                 Destroy(item.gameObject);
 
                 firstFlippedItem = null;
+                pairsFoundCount++;
+                turnsCount++;
+
+                OnPairsFoundCountChanged?.Invoke(pairsFoundCount);
+                OnTurnsCountChanged?.Invoke(turnsCount);
 
             }
             else
@@ -76,10 +93,34 @@ public partial class GameLogic : MonoBehaviour
 
                 firstFlippedItem.FlipBack();
                 item.FlipBack();
-                 firstFlippedItem = null;
+                firstFlippedItem = null;
+                turnsCount++;
 
+                OnTurnsCountChanged?.Invoke(turnsCount);
             }
         }
+    }
+
+    private void Reset()
+    {
+        foreach (GridItem item in allItems)
+        {
+            Destroy(item.gameObject);
+        }
+        allItems.Clear();
+
+
+        InitializeItems();
+    }
+
+    private void OnEnable()
+    {
+        GameUI.OnResetButtonClicked += Reset;
+    }
+
+    private void OnDisable()
+    {
+        GameUI.OnResetButtonClicked -= Reset;
     }
 
 }
