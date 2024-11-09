@@ -1,6 +1,8 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class GameUI : MonoBehaviour
 {
@@ -29,13 +31,15 @@ public class GameUI : MonoBehaviour
 
     public void OnHomeButtonClicked()
     {
-       
+        SceneManager.LoadScene(0);
     }
 
     public void OnButtonResetClicked()
     {
         OnResetButtonClicked?.Invoke();
     }
+
+    
 
     private void OnEnable() 
     {

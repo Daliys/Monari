@@ -7,6 +7,7 @@ public partial class GameLogic : MonoBehaviour
     [SerializeField] private GameGridGenerator gridGenerator;
     [SerializeField] private CardImageSetSO cardImageSet;
     [SerializeField] private ScoreInformationSO scoreInformation;
+    [SerializeField] private LevelDataSO levelData;
 
     public static event Action OnGameWin;
 
@@ -21,6 +22,16 @@ public partial class GameLogic : MonoBehaviour
 
     private void Start()
     {
+        // Load saved data if available
+        if (levelData.saveData != null)
+        {
+            LoadSavedData();
+            return;
+        }
+
+        // otherwise, initialize the game with the level data
+        gridSize = levelData.gridSize;
+
         if (gridSize.x * gridSize.y % 2 != 0)
         {
             Debug.LogError("Grid size must be even number");
@@ -59,6 +70,11 @@ public partial class GameLogic : MonoBehaviour
         }
 
         gameStatistic.ResetAll();
+    }
+
+    private void LoadSavedData()
+    {
+        // for loading saved data
     }
 
     private void OnItemFlip(GridItem item)

@@ -1163,6 +1163,7 @@ MonoBehaviour:
   gridGenerator: {fileID: 1020313911}
   cardImageSet: {fileID: 11400000, guid: 02650ac67be3f42dd8474a89785f41fc, type: 2}
   scoreInformation: {fileID: 11400000, guid: 702963a4c9204404bb477a1ca482c69b, type: 2}
+  levelData: {fileID: 11400000, guid: 0ac0850ba4176459f94e16ef1a32406b, type: 2}
 --- !u!4 &841863193
 Transform:
   m_ObjectHideFlags: 0
