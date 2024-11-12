@@ -2257,6 +2257,7 @@ MonoBehaviour:
   yInputField: {fileID: 988862389}
   errorText: {fileID: 475312169}
   levelDataSO: {fileID: 11400000, guid: 0ac0850ba4176459f94e16ef1a32406b, type: 2}
+  continueButton: {fileID: 646579918}
 --- !u!1 &1686386803
 GameObject:
   m_ObjectHideFlags: 0

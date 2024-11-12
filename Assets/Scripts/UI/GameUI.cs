@@ -11,6 +11,7 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
 
     public static event Action OnResetButtonClicked;
+    public static event Action OnButtonHomeClicked;
 
 
     public void UpdateMatches(int matches)
@@ -31,6 +32,7 @@ public class GameUI : MonoBehaviour
 
     public void OnHomeButtonClicked()
     {
+        OnButtonHomeClicked?.Invoke();
         SceneManager.LoadScene(0);
     }
 
@@ -38,7 +40,6 @@ public class GameUI : MonoBehaviour
     {
         OnResetButtonClicked?.Invoke();
     }
-
     
 
     private void OnEnable() 

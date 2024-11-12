@@ -25,8 +25,12 @@ public class GameStatistic
     /// </summary>
     public int Score { get; private set; }
 
+    /// <summary>
+    ///  The number of consecutive matches made in the game.
+    /// </summary>
+    public int ComboCount { get; private set; }
 
-    private int comboCount;
+
     private readonly ScoreInformationSO scoreInformation;
 
 
@@ -36,7 +40,22 @@ public class GameStatistic
         PairsFoundCount = 0;
         TurnsCount = 0;
         Score = 0;
-        comboCount = 0;
+        ComboCount = 0;
+
+        CallEvents();
+    }
+
+
+    public GameStatistic(ScoreInformationSO scoreInformation, int pairsFoundCount, int turnsCount, int score, int comboCount)
+    {
+        this.scoreInformation = scoreInformation;
+        PairsFoundCount = pairsFoundCount;
+        TurnsCount = turnsCount;
+        Score = score;
+        ComboCount = comboCount;
+
+        CallEvents();
+
     }
 
     /// <summary>
@@ -49,18 +68,16 @@ public class GameStatistic
         {
             PairsFoundCount++;
             TurnsCount++;
-            comboCount++;
-            Score += scoreInformation.GetScore(comboCount);
+            ComboCount++;
+            Score += scoreInformation.GetScore(ComboCount);
         }
         else
         {
             TurnsCount++;
-            comboCount = 0;
+            ComboCount = 0;
         }
 
-        OnPairsFoundCountChanged?.Invoke(PairsFoundCount);
-        OnTurnsCountChanged?.Invoke(TurnsCount);
-        OnScoreChanged?.Invoke(Score);
+        CallEvents();
 
     }
 
@@ -72,12 +89,18 @@ public class GameStatistic
         PairsFoundCount = 0;
         TurnsCount = 0;
         Score = 0;
-        comboCount = 0;
+        ComboCount = 0;
 
         OnPairsFoundCountChanged?.Invoke(PairsFoundCount);
         OnTurnsCountChanged?.Invoke(TurnsCount);
         OnScoreChanged?.Invoke(Score);
     }
 
+    private void CallEvents()
+    {
+        OnPairsFoundCountChanged?.Invoke(PairsFoundCount);
+        OnTurnsCountChanged?.Invoke(TurnsCount);
+        OnScoreChanged?.Invoke(Score);
+    }
 
 }

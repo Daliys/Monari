@@ -8,15 +8,14 @@ public class GridItem : MonoBehaviour
 {
     [SerializeField] private Image image;
 
-    public int ID { get ; private set; }
+    public int ImageId { get ; private set; }
+    public ItemData ItemData { get; private set; }
     public event Action<GridItem> OnFlip;
 
-    private Button button;
- 
+    private Button button; 
     private Sprite cardFaceSprite;
-    
-    private bool isFlipped;
 
+    private bool isFlipped;
 
 
     private void Start() 
@@ -28,8 +27,9 @@ public class GridItem : MonoBehaviour
 
     public void Initialize(ItemData itemData)
     {
+        ItemData = itemData;
         cardFaceSprite = itemData.sprite;
-        ID = itemData.id;
+        ImageId = itemData.id;
         isFlipped = false;
     }
 
@@ -44,12 +44,14 @@ public class GridItem : MonoBehaviour
         FlipFront();
     }
 
+
     public void FlipFront()
     {
         isFlipped = true;
         image.sprite = cardFaceSprite;
         OnFlip?.Invoke(this);
     }
+
 
     public void FlipBack()
     {

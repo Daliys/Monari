@@ -2,7 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
 
 /// <summary>
 /// Manages the Main Menu UI, handling user interactions, input validations, and scene transitions.
@@ -14,31 +14,32 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private TMP_InputField yInputField;
     [SerializeField] private TMP_Text errorText;
     [SerializeField] private LevelDataSO levelDataSO;
+    [SerializeField] private Button continueButton;
 
 
     private void Start()
     {
         LevelsPanel.SetActive(false);
-        xInputField.onValueChanged.AddListener((value) => OnInputFieldChanged(xInputField));
-        yInputField.onValueChanged.AddListener((value) => OnInputFieldChanged(yInputField));
+        xInputField.onEndEdit.AddListener((value) => OnEndEdit(value, xInputField));
+        yInputField.onEndEdit.AddListener((value) => OnEndEdit(value, yInputField));
         errorText.text = "";
     }
 
 
-    private void OnInputFieldChanged(TMP_InputField inputField)
+    private void OnEndEdit(string input, TMP_InputField inputField)
     {
-        if (int.TryParse(inputField.text, out int value))
+        if (int.TryParse(input, out int value))
         {
             if (value < 2 || value > 10)
             {
-                inputField.text = "2";
                 ShowErrorText("Value must be between 2 and 10");
+                inputField.text = "2";
             }
         }
         else
         {
-            inputField.text = "2";
             ShowErrorText("Value must be a number");
+            inputField.text = "2";
         }
     }
 
@@ -52,7 +53,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnContinueButtonClicked()
     {
-
+        SceneManager.LoadScene(1);
     }
 
 
@@ -68,6 +69,7 @@ public class MainMenuUI : MonoBehaviour
         }
 
         levelDataSO.gridSize = new Vector2Int(x, y);
+        levelDataSO.saveData = null;
         SceneManager.LoadScene(1);
     }
 
@@ -75,5 +77,23 @@ public class MainMenuUI : MonoBehaviour
     {
         errorText.text = text;
         DOVirtual.DelayedCall(3f, () => errorText.text = "");
+    }
+
+    private void OnEnable()
+    {
+        if (SaveManager.HasKey(SaveDataKeys.GameProgress) == false)
+        {
+            continueButton.interactable = false;
+            levelDataSO.saveData = null;
+            return;
+        }
+
+
+        SaveData data = SaveManager.Load<SaveData>(SaveDataKeys.GameProgress);
+        Debug.Log(data);
+
+        continueButton.interactable = true;
+        levelDataSO.saveData = data;
+
     }
 }

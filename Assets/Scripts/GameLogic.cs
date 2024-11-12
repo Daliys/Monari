@@ -12,13 +12,14 @@ public partial class GameLogic : MonoBehaviour
     public static event Action OnGameWin;
 
     private GameStatistic gameStatistic;
-
     private int totalPairsCount;
-
     private List<GridItem> allItems;
     private GridItem firstFlippedItem;
+    private Vector2Int gridSize;
 
-    private Vector2Int gridSize = new Vector2Int(4, 4);
+    // need to track if the game has changed to save the data
+    private bool hasChanged = false;
+
 
     private void Start()
     {
@@ -38,56 +39,94 @@ public partial class GameLogic : MonoBehaviour
             return;
         }
 
-        gameStatistic = new GameStatistic(scoreInformation);
         InitializeItems();
     }
 
+
     private void InitializeItems()
     {
-        allItems = gridGenerator.GenerateItems(gridSize.x, gridSize.y);
+        gameStatistic = new GameStatistic(scoreInformation);
+        hasChanged = true;
 
-        totalPairsCount = gridSize.x * gridSize.y / 2;
-        int totalImagesCount = cardImageSet.cardImages.Count;
+        List<ItemData> itemDatas = GenerateItemDatas(gridSize);
+        allItems = gridGenerator.GenerateItemsWith(gridSize.x, gridSize.y, itemDatas);
 
-        if (totalPairsCount < totalImagesCount)
+        // Subscribe to the flip event of the grid items & set the sprite of the item
+        foreach (GridItem item in allItems)
         {
-            HashSet<ItemData> imageIds = new HashSet<ItemData>();
-            while (imageIds.Count < totalPairsCount)
-            {
-                imageIds.Add(cardImageSet.GetRandomItem());
-            }
-
-            List<ItemData> imageIdsList = new List<ItemData>(imageIds);
-            imageIdsList.AddRange(imageIdsList);
-
-            foreach (GridItem item in allItems)
-            {
-                int randomIndex = UnityEngine.Random.Range(0, imageIdsList.Count);
-                item.Initialize(imageIdsList[randomIndex]);
-                imageIdsList.RemoveAt(randomIndex);
-                item.OnFlip += OnItemFlip;
-            }
+            item.OnFlip += OnItemFlip;
         }
 
         gameStatistic.ResetAll();
     }
 
-    private void LoadSavedData()
+
+    /// <summary>
+    ///  Generate a list of item datas for the grid based on the grid size
+    /// </summary>
+    private List<ItemData> GenerateItemDatas(Vector2Int gridSize)
     {
-        // for loading saved data
+        List<ItemData> itemDatas = new();
+        totalPairsCount = gridSize.x * gridSize.y / 2;
+        int totalImagesCount = cardImageSet.cardImages.Count;
+
+        // If the number of card images is less than the total number of pairs, we just take the random images,
+        // because it is anyway going to be repeated
+        if (totalImagesCount < totalPairsCount)
+        {
+            while (itemDatas.Count < totalPairsCount)
+            {
+                itemDatas.Add(cardImageSet.GetRandomItem());
+            }
+            // Duplicate the item datas to create pairs of items for the grid
+            itemDatas.AddRange(itemDatas);
+        }
+        else  // get only unique images
+        {
+            HashSet<ItemData> itemHashSet = new();
+            // Generate a set of unique item datas, here we are using a hashset to ensure uniqueness 
+            // (if pairs count is less than total images)
+            while (itemHashSet.Count < totalPairsCount)
+            {
+                ItemData itemData = cardImageSet.GetRandomItem();
+                itemHashSet.Add(itemData);
+            }
+
+            // Duplicate the item datas to create pairs of items for the grid
+            itemDatas.AddRange(itemHashSet);
+            itemDatas.AddRange(itemDatas);
+        }
+
+        // Shuffle the item datas
+        for (int i = 0; i < itemDatas.Count; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, itemDatas.Count);
+            (itemDatas[i], itemDatas[randomIndex]) = (itemDatas[randomIndex], itemDatas[i]);
+        }
+
+        // Assign grid positions to the item datas
+        for (int i = 0; i < itemDatas.Count; i++)
+        {
+            ItemData itemData = itemDatas[i];
+            itemData.gridPosition = new Vector2Int(i % gridSize.x, i / gridSize.x);
+            itemDatas[i] = itemData;
+        }
+
+        return itemDatas;
     }
+
 
     private void OnItemFlip(GridItem item)
     {
+        hasChanged = true;
         if (firstFlippedItem == null)
         {
             firstFlippedItem = item;
         }
         else
         {
-            if (firstFlippedItem.ID == item.ID)
+            if (firstFlippedItem.ImageId == item.ImageId)
             {
-
                 allItems.Remove(firstFlippedItem);
                 allItems.Remove(item);
 
@@ -97,12 +136,10 @@ public partial class GameLogic : MonoBehaviour
                 firstFlippedItem = null;
                 gameStatistic.OnCompleteSwap(true);
 
-
                 if (gameStatistic.PairsFoundCount == totalPairsCount)
                 {
                     OnGameWin?.Invoke();
                 }
-
             }
             else
             {
@@ -110,11 +147,67 @@ public partial class GameLogic : MonoBehaviour
                 firstFlippedItem.FlipBack();
                 item.FlipBack();
                 firstFlippedItem = null;
-                
+
                 gameStatistic.OnCompleteSwap(false);
             }
         }
     }
+
+
+    private void SaveData()
+    {
+        if (hasChanged == false)
+        {
+            return;
+        }
+
+        // If there are no items, delete the saved data
+        if (allItems.Count == 0)
+        {
+            SaveManager.DeleteKey(SaveDataKeys.GameProgress);
+            return;
+        }
+
+        int pairsFoundCount = gameStatistic.PairsFoundCount;
+        int turnsCount = gameStatistic.TurnsCount;
+        int score = gameStatistic.Score;
+        int comboCount = gameStatistic.ComboCount;
+
+        List<SaveItemInfo> savedItems = new();
+        foreach (GridItem item in allItems)
+        {
+            savedItems.Add(new SaveItemInfo(item.ImageId, item.ItemData.gridPosition));
+        }
+
+        SaveData saveData = new SaveData(gridSize, pairsFoundCount, turnsCount, score, comboCount, savedItems);
+        SaveManager.Save(SaveDataKeys.GameProgress, saveData);
+    }
+
+
+    private void LoadSavedData()
+    {
+        SaveData saveData = levelData.saveData;
+        gridSize = saveData.gridSize;
+        gameStatistic = new GameStatistic(scoreInformation, saveData.pairsFoundCount, saveData.turnsCount, saveData.score, saveData.comboCount);
+        totalPairsCount = gridSize.x * gridSize.y / 2;
+        // Convert the saved items to item datas
+
+        List<ItemData> itemDatas = new();
+        foreach (SaveItemInfo saveItem in saveData.savedItems)
+        {
+            Sprite sprite = cardImageSet.cardImages[saveItem.spriteId];
+            ItemData itemData = new(sprite, saveItem.spriteId, saveItem.gridPosition);
+            itemDatas.Add(itemData);
+        }
+
+        allItems = gridGenerator.GenerateItemsWith(gridSize.x, gridSize.y, itemDatas);
+
+        foreach (GridItem item in allItems)
+        {
+            item.OnFlip += OnItemFlip;
+        }
+    }
+
 
     private void Reset()
     {
@@ -128,14 +221,28 @@ public partial class GameLogic : MonoBehaviour
         InitializeItems();
     }
 
+
     private void OnEnable()
     {
         GameUI.OnResetButtonClicked += Reset;
+        GameUI.OnButtonHomeClicked += SaveData;
     }
+
 
     private void OnDisable()
     {
         GameUI.OnResetButtonClicked -= Reset;
+        GameUI.OnButtonHomeClicked -= SaveData;
     }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            SaveData();
+        }
+    }
+
+    private void OnApplicationQuit() => SaveData();
 
 }
