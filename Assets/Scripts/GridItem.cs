@@ -6,22 +6,24 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class GridItem : MonoBehaviour
 {
-    [SerializeField] private Image image;
+    [SerializeField] private Image frontImage;
+    [SerializeField] private Image backImage;
 
-    public int ImageId { get ; private set; }
+    public int ImageId { get; private set; }
     public ItemData ItemData { get; private set; }
     public event Action<GridItem> OnFlip;
 
-    private Button button; 
+    private Button button;
     private Sprite cardFaceSprite;
 
     private bool isFlipped;
+    private Tween animationTween;
 
 
-    private void Start() 
+    private void Start()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnButtonClick);    
+        button.onClick.AddListener(OnButtonClick);
     }
 
 
@@ -36,7 +38,7 @@ public class GridItem : MonoBehaviour
 
     private void OnButtonClick()
     {
-        if(isFlipped)
+        if (isFlipped)
         {
             return;
         }
@@ -48,17 +50,44 @@ public class GridItem : MonoBehaviour
     public void FlipFront()
     {
         isFlipped = true;
-        image.sprite = cardFaceSprite;
+        frontImage.sprite = cardFaceSprite;
         OnFlip?.Invoke(this);
+
+        animationTween = transform.DORotate(new Vector3(0, 90, 0), 0.2f).OnComplete(() =>
+         {
+             backImage.gameObject.SetActive(false);
+             frontImage.gameObject.SetActive(true);
+             transform.DORotate(new Vector3(0, 0, 0), 0.2f);
+
+         });
     }
 
 
     public void FlipBack()
     {
-        DOVirtual.DelayedCall(0.5f, () =>
+        animationTween = DOVirtual.DelayedCall(0.5f, () =>
         {
-            image.sprite = null;
+            transform.DORotate(new Vector3(0, 90, 0), 0.2f).OnComplete(() =>
+                      {
+                          frontImage.gameObject.SetActive(false);
+                          backImage.gameObject.SetActive(true);
+                          transform.DORotate(new Vector3(0, 0, 0), 0.2f);
+                      });
+
+            frontImage.sprite = null;
             isFlipped = false;
+        });
+    }
+
+
+    public void DestroyItem()
+    {
+        animationTween = DOVirtual.DelayedCall(0.5f, () =>
+        {
+            transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+            {
+                Destroy(gameObject);
+            });
         });
     }
 

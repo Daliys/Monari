@@ -1214,7 +1214,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -42, y: -333}
+  m_AnchoredPosition: {x: -81.70694, y: -333}
   m_SizeDelta: {x: 163.4139, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &894681011
@@ -1271,7 +1271,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1326,6 +1326,7 @@ GameObject:
   - component: {fileID: 1020313910}
   - component: {fileID: 1020313909}
   - component: {fileID: 1020313911}
+  - component: {fileID: 1020313912}
   m_Layer: 5
   m_Name: GridPanel
   m_TagString: Untagged
@@ -1407,6 +1408,18 @@ MonoBehaviour:
   itemsSpacing: 10
   horizontalPadding: 25
   verticalPadding: 25
+--- !u!225 &1020313912
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020313907}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1044935175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1417,13 +1430,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1044935176}
   - component: {fileID: 1044935178}
+  - component: {fileID: 1044935179}
   m_Layer: 5
   m_Name: WinLosePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1044935176
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1453,6 +1467,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044935175}
   m_CullTransparentMesh: 1
+--- !u!225 &1044935179
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044935175}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1327218191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1726,6 +1752,7 @@ MonoBehaviour:
   matchesText: {fileID: 1520487262}
   turnsText: {fileID: 1963312338}
   scoreText: {fileID: 894681011}
+  textAnimationSettings: {fileID: 11400000, guid: 3a65d60c0896840afb8fbd6f1f78620b, type: 2}
 --- !u!114 &1425515239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1738,8 +1765,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21173af1990f8485d83cbeb97cb15d04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 1044935175}
+  panelCanvasGroup: {fileID: 1044935179}
+  gridCanvasGroup: {fileID: 1020313912}
   congratsText: {fileID: 122335139}
+  panelAnimationSettings: {fileID: 11400000, guid: b3f5a7cffdb92427b8e8c40b03d20848, type: 2}
 --- !u!1 &1520487260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1775,7 +1804,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -42, y: -149}
+  m_AnchoredPosition: {x: -81.70697, y: -148}
   m_SizeDelta: {x: 163.4139, y: 75}
   m_Pivot: {x: 0.49999994, y: 0.5}
 --- !u!114 &1520487262
@@ -1832,7 +1861,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1910,7 +1939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -42, y: -242}
+  m_AnchoredPosition: {x: -81.70694, y: -242}
   m_SizeDelta: {x: 163.4139, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1963312338
@@ -1967,7 +1996,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

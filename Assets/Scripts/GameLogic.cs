@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
-public partial class GameLogic : MonoBehaviour
+public class GameLogic : MonoBehaviour
 {
     [SerializeField] private GameGridGenerator gridGenerator;
     [SerializeField] private CardImageSetSO cardImageSet;
@@ -130,8 +131,8 @@ public partial class GameLogic : MonoBehaviour
                 allItems.Remove(firstFlippedItem);
                 allItems.Remove(item);
 
-                Destroy(firstFlippedItem.gameObject);
-                Destroy(item.gameObject);
+                firstFlippedItem.DestroyItem();
+                item.DestroyItem();
 
                 firstFlippedItem = null;
                 gameStatistic.OnCompleteSwap(true);
