@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using ScriptableObjects;
+using Sounds;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,6 +21,10 @@ namespace UI
         public static event Action OnResetButtonClicked;
         public static event Action OnButtonHomeClicked;
 
+        private void Start()
+        {
+            SoundManager.Instance.PlayGameMusic();
+        }
 
         private void UpdateMatches(int matches)
         {
@@ -39,12 +44,14 @@ namespace UI
 
         public void OnHomeButtonClicked()
         {
+            SoundManager.Instance.PlayButtonClickedSound();
             OnButtonHomeClicked?.Invoke();
             SceneManager.LoadScene(0);
         }
 
         public void OnButtonResetClicked()
         {
+            SoundManager.Instance.PlayButtonClickedSound();
             OnResetButtonClicked?.Invoke();
         }
         

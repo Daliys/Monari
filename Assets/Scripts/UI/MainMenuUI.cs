@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Sounds;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,6 +24,8 @@ public class MainMenuUI : MonoBehaviour
         xInputField.onEndEdit.AddListener((value) => OnEndEdit(value, xInputField));
         yInputField.onEndEdit.AddListener((value) => OnEndEdit(value, yInputField));
         errorText.text = "";
+        
+        SoundManager.Instance.PlayMenuMusic();
     }
 
 
@@ -47,18 +50,22 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnPlayNewLevelButtonClicked()
     {
+        SoundManager.Instance.PlayButtonClickedSound();
         LevelsPanel.SetActive(true);
     }
 
 
     public void OnContinueButtonClicked()
     {
+        SoundManager.Instance.PlayButtonClickedSound();
         SceneManager.LoadScene(1);
     }
 
 
     public void OnGenerateButtonClicked()
     {
+        SoundManager.Instance.PlayButtonClickedSound();
+        
         int x = int.Parse(xInputField.text);
         int y = int.Parse(yInputField.text);
 

@@ -1,8 +1,12 @@
 using System;
 using DG.Tweening;
+using Sounds;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This class is responsible for managing the grid item, handling user interactions, and animations
+/// </summary>
 [RequireComponent(typeof(Button))]
 public class GridItem : MonoBehaviour
 {
@@ -53,6 +57,7 @@ public class GridItem : MonoBehaviour
         frontImage.sprite = cardFaceSprite;
         OnFlip?.Invoke(this);
 
+        SoundManager.Instance.PlayCardFlipSound();  
         animationTween = transform.DORotate(new Vector3(0, 90, 0), 0.2f).OnComplete(() =>
          {
              backImage.gameObject.SetActive(false);
@@ -67,6 +72,7 @@ public class GridItem : MonoBehaviour
     {
         animationTween = DOVirtual.DelayedCall(0.5f, () =>
         {
+            SoundManager.Instance.PlayCardFlipSound();
             transform.DORotate(new Vector3(0, 90, 0), 0.2f).OnComplete(() =>
                       {
                           frontImage.gameObject.SetActive(false);
@@ -84,6 +90,7 @@ public class GridItem : MonoBehaviour
     {
         animationTween = DOVirtual.DelayedCall(0.5f, () =>
         {
+            SoundManager.Instance.PlayCardFlipSound();
             transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
             {
                 Destroy(gameObject);

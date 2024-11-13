@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
+/// <summary>
+///  This class is responsible for the game logic, it initializes the game grid, handles the game logic, and saves the game data
+/// </summary>
 public class GameLogic : MonoBehaviour
 {
     [SerializeField] private GameGridGenerator gridGenerator;

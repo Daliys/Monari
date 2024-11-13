@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17c9b9980eab4161b83f9c3a5b414741, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: 
+  buttonClickedSound: {fileID: 8300000, guid: 1625c79c2422347ecbff666ed715ad8e, type: 3}
+  cardFlipSound: {fileID: 8300000, guid: 26a5a96451b674948a2ea20ee35a8daa, type: 3}
+  winSound: {fileID: 8300000, guid: e534f9386942649c8a89fb27ef3e980e, type: 3}
+  menuMusic: {fileID: 8300000, guid: 42bfca86297604ccd9d5ed5614345d34, type: 3}
+  gameMusic: {fileID: 8300000, guid: 755bed10e497747f09e018d4e7ec017c, type: 3}
