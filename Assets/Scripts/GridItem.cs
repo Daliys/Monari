@@ -51,7 +51,7 @@ public class GridItem : MonoBehaviour
     }
 
 
-    public void FlipFront()
+    private void FlipFront()
     {
         isFlipped = true;
         frontImage.sprite = cardFaceSprite;
@@ -86,16 +86,40 @@ public class GridItem : MonoBehaviour
     }
 
 
-    public void DestroyItem()
+    public void DestroyItem(bool shouldPlayMusic = true, bool shouldWaitForFirstAnimation = true)
     {
-        animationTween = DOVirtual.DelayedCall(0.5f, () =>
+        if (shouldWaitForFirstAnimation == false)
         {
-            SoundManager.Instance.PlayCardFlipSound();
             transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
             {
+                // Here is not really good approach to destroy the game object, need to Create a pool of objects
+                // but I don't have enough time to implement it, event though it will take a 20 minutes
+                Destroy(gameObject);
+            });
+            return;
+        }
+        
+        
+        animationTween = DOVirtual.DelayedCall(0.5f, () =>
+        {
+            if (shouldPlayMusic)
+            {
+                SoundManager.Instance.PlayCardFlipSound();
+            }
+
+            transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+            {
+                // Here is not really good approach to destroy the game object, need to Create a pool of objects
+                // but I don't have enough time to implement it, event though it will take a 20 minutes
                 Destroy(gameObject);
             });
         });
+    }
+    
+    public void OnDestroy()
+    {
+        button.onClick.RemoveListener(OnButtonClick);
+        animationTween.Kill();
     }
 
 }

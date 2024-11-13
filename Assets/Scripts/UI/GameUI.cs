@@ -46,7 +46,7 @@ namespace UI
         {
             SoundManager.Instance.PlayButtonClickedSound();
             OnButtonHomeClicked?.Invoke();
-            SceneManager.LoadScene(0);
+            DOVirtual.DelayedCall(0.55f, () => SceneManager.LoadScene(0));
         }
 
         public void OnButtonResetClicked()
@@ -58,6 +58,11 @@ namespace UI
         private void AnimateText(TMP_Text text, string newValue)
         {
             if (text.text == newValue)
+            {
+                return;
+            }
+            
+            if(text == null || textAnimationSettings == null)
             {
                 return;
             }

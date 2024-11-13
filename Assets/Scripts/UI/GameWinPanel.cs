@@ -22,8 +22,13 @@ namespace UI
 
         private void Show()
         {
-            SoundManager.Instance.PlayWinSound();
+            if(gridCanvasGroup == null || panelCanvasGroup == null)
+            {
+                return;
+            }
             
+            
+            SoundManager.Instance.PlayWinSound();
             Sequence sequence = DOTween.Sequence();
             // wait for the end of swapping animation it's 0.5sec
             sequence.AppendInterval(0.5f);
@@ -38,6 +43,11 @@ namespace UI
 
         private void Hide()
         {
+            if(gridCanvasGroup == null || panelCanvasGroup == null)
+            {
+                return;
+            }
+            
             Sequence sequence = DOTween.Sequence();
             sequence.Append(panelCanvasGroup.DOFade(0, panelAnimationSettings.fadeDuration));
             sequence.Join(panelCanvasGroup.transform.DOScale(0, panelAnimationSettings.scaleDuration).SetEase(Ease.InBack));

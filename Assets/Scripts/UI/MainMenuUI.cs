@@ -94,10 +94,8 @@ public class MainMenuUI : MonoBehaviour
             levelDataSO.saveData = null;
             return;
         }
-
-
+        
         SaveData data = SaveManager.Load<SaveData>(SaveDataKeys.GameProgress);
-        Debug.Log(data);
 
         continueButton.interactable = true;
         levelDataSO.saveData = data;

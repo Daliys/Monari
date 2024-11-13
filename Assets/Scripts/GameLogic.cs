@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UI;
 using UnityEngine;
 
@@ -210,6 +211,7 @@ public class GameLogic : MonoBehaviour
         {
             item.OnFlip += OnItemFlip;
         }
+   
     }
 
 
@@ -217,26 +219,36 @@ public class GameLogic : MonoBehaviour
     {
         foreach (GridItem item in allItems)
         {
-            Destroy(item.gameObject);
+            item.DestroyItem(false, false);
         }
+        
         allItems.Clear();
+    }
 
-
-        InitializeItems();
+    private void ResetAndInitialize()
+    {
+        Reset();
+        DOVirtual.DelayedCall(0.55f, InitializeItems);
+    }
+    
+    private void ResetAndSave()
+    {
+        Reset();
+        SaveData();
     }
 
 
     private void OnEnable()
     {
-        GameUI.OnResetButtonClicked += Reset;
-        GameUI.OnButtonHomeClicked += SaveData;
+        GameUI.OnResetButtonClicked += ResetAndInitialize;
+        GameUI.OnButtonHomeClicked += ResetAndSave;
     }
 
 
     private void OnDisable()
     {
         GameUI.OnResetButtonClicked -= Reset;
-        GameUI.OnButtonHomeClicked -= SaveData;
+        GameUI.OnButtonHomeClicked -= ResetAndSave;
     }
 
     private void OnApplicationPause(bool pauseStatus)
